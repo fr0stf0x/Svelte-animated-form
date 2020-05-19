@@ -1,0 +1,219 @@
+<script>
+	const strengthText = ["", "bad 💩", "ok 😐", "decent 🙂", "solid 💪"];
+	let strength = 0;
+	let validations = [];
+	let showPassword = false;
+
+	function validatePassword(e) {
+		const password = e.target.value;
+
+		validations = [
+			(password.length > 5),
+			(password.search(/[A-Z]/) > -1),
+			(password.search(/[0-9]/) > -1),
+			(password.search(/[$&+,:;=?@#]/) > -1)
+		]
+
+		strength = validations.reduce((acc, cur) => acc + cur);
+	}
+
+</script>
+
+<style>
+	main {
+		display: flex;
+		align-items: center;
+		flex-direction: column;
+		font-family: sofia-pro, sans-serif;
+		text-align: center;
+	}
+
+	h1 {
+		font-family: gothic-open-shaded, sans-serif;
+		font-weight: 400;
+		font-style: normal;
+		color: greenyellow;
+	}
+
+	form {
+		--text-color: #afafaf;
+		max-width: 500px;
+	}
+
+	.field {
+		width: 100%;
+		position: relative;
+		border-bottom: 2px dashed var(--text-color);
+		margin: 4rem auto 1rem;
+	}
+
+	.label {
+		color: var(--text-color);
+		font-size: 1.2rem;
+	}
+
+	.input {
+		outline: none;
+		border: none;
+		overflow: hidden;
+		margin: 0;
+		width: 100%;
+		padding: 0.25rem 0;
+		background: none;
+		color: white;
+		font-size: 1.2rem;
+	}
+
+	.input:valid {
+		color: yellowgreen;
+	}
+	
+	.input:invalid {
+		color: orangered;
+	}
+
+	.field::after {
+		content: "";
+		position: relative;
+		display: block;
+		height: 4px;
+		width: 100%;
+		background: #d16dff;
+		transform: scaleX(0);
+		transform-origin: 0%;
+		transition: transform 500ms ease;
+		top: 2px;
+	}
+
+	.field:focus-within {
+		border-color: transparent;
+	}
+
+	.field:focus-within::after {
+		transform: scaleX(100%);
+	}
+
+	.label {
+		z-index: -1;
+		position: absolute;
+		transform: translateY(-2rem);
+		transform-origin: 0%;
+		transition: transform 400ms;
+	}
+
+	.field:focus-within .label,
+	.input:not(:placeholder-shown) + .label {
+		transform: scale(0.8) translateY(-5rem);
+	}
+
+	.strength {
+		display: flex;
+		height: 20px;
+		width: 100%;
+	}
+
+	.bar {
+		margin-right: 5px;
+		width: 25%;
+		transition: box-shadow 500ms;
+		box-shadow: inset 0px 20px #1f1f1f;
+	}
+
+	.bar-show {
+		box-shadow: none;
+	}
+
+	.bar-1 {
+		background: linear-gradient(to right, red, orangered);
+	}
+
+	.bar-2 {
+		background: linear-gradient(to right, orangered, yellow);
+	}
+
+	.bar-3 {
+		background: linear-gradient(to right, yellow, yellowgreen);
+	}
+
+	.bar-4 {
+		background: linear-gradient(to right, yellowgreen, green);
+	}
+
+	.toggle-password {
+		position: absolute;
+		cursor: help;
+		font-size: 0.8rem;
+		right: 0.25rem;
+		bottom: 0.5rem;
+	}
+
+	ul {
+		display: flex;
+		align-items: flex-start;
+		padding-left: 0;
+		list-style: none;
+		flex-direction: column;
+		width: 100%;
+	}
+
+
+	button {
+		cursor: pointer;
+		margin-top: 2rem;
+		padding: 10px 30px;
+		font-weight: bold;
+		border: 2px solid greenyellow;
+		color: greenyellow;
+		border-radius: 100px;
+		background: transparent;
+		transition: all 1000ms;
+	}
+
+	button:disabled {
+		cursor: not-allowed;
+		border-color: #b6b6b6;
+		color: #b6b6b6;
+	}
+
+</style>
+
+
+<main>
+	<h1>Beconfident.me</h1>
+
+	<form>
+
+		<div class="field">
+			<input type="email" name="email" class="input" placeholder="" />
+			<label for="email" class="label">Email</label>
+		</div>
+
+		<div class="field">
+			<input type={showPassword ? "text" : "password"} name="password" class="input" placeholder="" on:input={validatePassword} />
+			<label for="password" class="label">Password</label>
+			<span
+				class="toggle-password"
+				on:mouseenter={() => showPassword = true}
+				on:mouseleave={() => showPassword = false}
+			>
+				{showPassword ? '🙈' : '👁️'}
+			</span>
+		</div>
+
+		<div class="strength">
+			<div class="bar bar-1" class:bar-show={strength > 0}></div>
+			<div class="bar bar-2" class:bar-show={strength > 1}></div>
+			<div class="bar bar-3" class:bar-show={strength > 2}></div>
+			<div class="bar bar-4" class:bar-show={strength > 3}></div>
+		</div>
+
+		<ul>
+			<li>{validations[0] ? '✔' : '❌'} must be at least 5 characters</li>
+			<li>{validations[1] ? '✔' : '❌'} must contain a capital letter</li>
+			<li>{validations[2] ? '✔' : '❌'} must contain a number</li>
+			<li>{validations[3] ? '✔' : '❌'} must contain one of $&+,:;=?@#</li>
+		</ul>
+
+		<button disabled={strength < 4}>Sign Up</button>
+	</form>
+</main>
